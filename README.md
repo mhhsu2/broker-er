@@ -7,9 +7,9 @@
 	* **Show how to update records.** e.g. Update "Purchased?" column.
 	* **Show how to delete records.** Delete from watchlist.
 * Two SQL Queries using two of the following (ideally related to AF1/AF2, not required; not required to integrate into app):
-	* **join of multiple relations.** 
+	* **join of multiple relations.** Join Stocks table and Watchlist table since Watchlist table doesn't contain stock prices.
 	* **set operations.** e.g. Difference of Stocks table and Watchlist table to suggest other stocks to follow.
-	* **aggregation via GROUP BY.** e.g. GROUP BY company name to show average price, or trend over last x days, etc.
+	* **aggregation via GROUP BY.** e.g. GROUP BY company name to show last price.
 
 
 ### Final Demo (Nov. 30th) 

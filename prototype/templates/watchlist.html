@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{%block content%}
+
+
+<form method="POST" action="">
+
+  <div class="form-group">
+    <label for="company_name">Name of Company</label>
+    <input type="company_name" class="form-control" name="company_name" aria-describedby="usernameHelp">
+  </div>
+
+
+  <!-- BUTTON GROUP-->
+  <div class="btn-group" role="group" aria-label="Basic example">
+    <button type="submit" name= "button" value = 'SEARCH' class="btn btn-secondary">SEARCH</button>
+    <button type="submit" name = "button" value = 'INSERT' class="btn btn-secondary">INSERT</button>
+    <button type="submit" name = "button" value = 'DELETE' class="btn btn-secondary">DELETE</button>
+    <button type="submit" name = "button" value = 'UPDATE' class="btn btn-secondary">UPDATE</button>
+
+  </div>
+
+</form
+
+  {% for company in companyData %}
+  <ul class="list-group">
+    <li class="list-group-item"> {{company[0]}}--{{company[1]}}--{{company[2]}} </li>
+  </ul>
+  {% endfor %}
+
+{% endblock %}

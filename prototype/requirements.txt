@@ -1,0 +1,6 @@
+flask
+flask-mysql
+flask-mysqldb
+yaml
+Jinja2
+WTForms

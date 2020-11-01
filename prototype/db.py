@@ -63,11 +63,14 @@ class Database:
         return result
     
 
-    def select_individual_stock(self, ticker):
+    def select_stock_with_daily_price(self, ticker):
         query = f"""
-                    SELECT *
+                    SELECT Ticker, Date, CAST(Open AS DECIMAL(5, 2)) AS Open,
+                                         CAST(High AS DECIMAL(5, 2)) AS High,
+                                         CAST(Low AS DECIMAL(5, 2)) AS Low,
+                                         CAST(Close AS DECIMAL(5, 2)) AS Close
                     FROM StockPrice
-                    WHERE Ticker = {ticker}
+                    WHERE Ticker = '{str(ticker)}'
                  """  
         self.cur.execute(query)
         result = self.cur.fetchall()
@@ -103,5 +106,6 @@ if __name__ == "__main__":
     # print(f"{db.select_stock_with_latest_info()[:2]}")
     # db.insert_stock_data("top500_Oct-09-2020.csv")
     # print(db.select_stock_with_max_price())
+    # print(db.select_stock_with_daily_price('MSFT'))
 
     

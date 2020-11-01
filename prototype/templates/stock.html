@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content%}
+
+<table id="data" class="table text-center table-sm table-hover table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Comapny Ticker</th>
+            <th>Date</th>
+            <th>Open</th>
+            <th>High</th>
+            <th>Low</th>
+            <th>Close</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for row in stockData %}
+        <tr>
+            <td>{{ row['Ticker'] }}</td>
+            <td>{{ row['Date'] }}</td>
+            <td>{{ row['Open'] }}</td>
+            <td>{{ row['High'] }}</td>
+            <td>{{ row['Low']}}</td>
+            <td>{{ row['Close']}}</td>
+            
+        </tr> 
+        
+        {% endfor %} 
+    </tbody>   
+</table>
+
+{% endblock %}

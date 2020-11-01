@@ -92,7 +92,9 @@ def home():
 
 @app.route('/stock/<ticker>', methods=['GET'])
 def stock(ticker):
-    pass
+    db = Database()
+    stockData = db.select_stock_with_daily_price(ticker)
+    return render_template('stock.html', ticker=ticker, stockData=stockData)
 
 @app.route('/users')
 def users():

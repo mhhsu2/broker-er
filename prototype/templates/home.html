@@ -7,6 +7,38 @@
 
   <form method="POST" action="">
     <h1>ALL THE STOCKS~~</h1>
-  </form
+  </form>
+
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-1 mb-1">
+
+    <h3>Experiment Table</h3>
+
+</div>
+
+<table id="data" class="table text-center table-sm table-hover table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Comapny Ticker</th>
+            <th>Sector</th>
+            <th>Country</th>
+            <th>Date</th>
+            <th>Open Price</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for row in stockInfo %}
+        <tr>
+            <td>{{ row['Ticker'] }}</td>
+            <td>{{ row['sector'] }}</td>
+            <td>{{ row['country'] }}</td>
+            <td>{{ row['Date'] }}</td>
+            <td>{{ row['Open']}}</td>
+            
+        </tr> 
+        
+        {% endfor %} 
+    </tbody>   
+</table>
 
 {% endblock %}

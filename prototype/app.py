@@ -1,11 +1,19 @@
-from flask import Flask, render_template, request, redirect,url_for
-from flask_mysqldb import MySQL
 import yaml
+import os
+
+from flask import Flask, render_template, request, redirect, url_for
+from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
+from flask_mysqldb import MySQL
+
+from db import Database
+
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'my key values'
 
 # configure your yaml
-db = yaml.load(open('db.yaml'))
+CREDENTIAL_DIR = '.credentials'
+db = yaml.load(open(os.path.join(CREDENTIAL_DIR, 'db.yaml')), Loader=yaml.FullLoader)
 app.config['MYSQL_HOST'] = db['mysql_host']
 app.config['MYSQL_USER'] = db['mysql_user']
 app.config['MYSQL_PASSWORD'] = db['mysql_password']
@@ -13,9 +21,60 @@ app.config['MYSQL_DB'] = db['mysql_db']
 
 mysql = MySQL(app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+# User login
+# TODO: Move to individual file with blueprint registration
+class User(UserMixin):
+    pass
+
+@login_manager.user_loader
+def user_loader(user_id):
+    db = Database()
+    if user_id != db.get_user_id(user_id):
+        return
+
+    user = User()
+    user.id = user_id
+    return user
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template("login.html")
+
+    user_id = request.form['user_id']
+    password = request.form['password']
+
+    db = Database()
+    if (user_id == db.get_user_id(user_id)) and (password == db.get_user_password(user_id)):
+        user = User()
+        user.id = user_id
+        login_user(user)
+        return redirect(url_for('home'))
+    
+    return render_template('login.html')
+
+@app.route("/logout", methods=["GET"])
+@login_required
+def logout():
+    """Logout the current user."""
+    user = current_user
+    user.authenticated = False
+    logout_user()
+    return render_template("login.html")
+
+#TODO:
+@app.route("/register", methods=["GET"])
+def register():
+    pass
+
 # This is home, probably need to get rid of this and change to show stocks :)
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    db = Database()
     if request.method == 'POST':
         # Fetch form data
         userDetails = request.form
@@ -27,8 +86,13 @@ def home():
         mysql.connection.commit()
         cur.close()
         return redirect('/users')
-    return render_template('home.html')
 
+    stockInfo = db.select_stock_with_latest_info()
+    return render_template('home.html', stockInfo=stockInfo)
+
+@app.route('/stock/<ticker>', methods=['GET'])
+def stock(ticker):
+    pass
 
 @app.route('/users')
 def users():
@@ -41,6 +105,7 @@ def users():
 
 @app.route('/watchlist', methods=['GET','POST'])
 def watchlist():
+    # Get current user id with "current_user.id"
 
     cur = mysql.connection.cursor()
     cur.execute("SELECT* FROM Watchlist")
@@ -54,17 +119,17 @@ def watchlist():
         if stockDetails['button'] == 'SEARCH':
 
 
-            company_name = stockDetails['company_name']
+            ticker = stockDetails['ticker']
             cur = mysql.connection.cursor()
-            cur.execute("SELECT * FROM Watchlist WHERE company_name like '%s'" %company_name)
+            cur.execute("SELECT * FROM Watchlist WHERE ticker like '%s'" %ticker)
             companyData = cur.fetchall()
 
         #INSERT
         elif stockDetails['button'] == 'INSERT':
 
-            company_name = stockDetails['company_name']
+            ticker = stockDetails['ticker']
             cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO Watchlist(username, company_name) VALUES(%s, %s)",('max',company_name))
+            cur.execute("INSERT INTO Watchlist(username, ticker) VALUES(%s, %s)",(current_user.id,ticker))
             mysql.connection.commit()
 
             cur = mysql.connection.cursor()
@@ -73,9 +138,9 @@ def watchlist():
         #UPDATE
         if stockDetails['button'] == 'UPDATE':
 
-            company_name = stockDetails['company_name']
+            ticker = stockDetails['ticker']
             cur = mysql.connection.cursor()
-            cur.execute("UPDATE Watchlist SET owned = IF (owned,0,1) WHERE company_name like '%s'" %company_name)
+            cur.execute("UPDATE Watchlist SET owned = IF (owned,0,1) WHERE ticker like '%s'" %ticker)
             mysql.connection.commit()
 
             cur = mysql.connection.cursor()
@@ -84,9 +149,9 @@ def watchlist():
         #DELETE
         elif stockDetails['button'] == 'DELETE':
 
-            company_name = stockDetails['company_name']
+            ticker = stockDetails['ticker']
             cur = mysql.connection.cursor()
-            cur.execute("DELETE FROM Watchlist WHERE company_name like '%s'" %company_name)
+            cur.execute("DELETE FROM Watchlist WHERE ticker like '%s'" %ticker)
             mysql.connection.commit()
 
             cur = mysql.connection.cursor()

@@ -24,7 +24,7 @@
 
   {% for company in companyData %}
   <ul class="list-group">
-    <li class="list-group-item"> {{company[0]}}--{{company[1]}}--{{company[2]}} </li>
+    <li class="list-group-item"> {{company['username']}}--{{company['ticker']}}--{{company['owned']}} </li>
   </ul>
   {% endfor %}
 

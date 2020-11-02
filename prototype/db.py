@@ -6,7 +6,7 @@ import pandas as pd
 
 class Database:
     def __init__(self):
-        CREDENTIAL_DIR = '.credentials'
+        CREDENTIAL_DIR = '../.credentials'
         db_crediential = yaml.load(open(os.path.join(CREDENTIAL_DIR, 'db.yaml')), Loader=yaml.FullLoader)
         host = db_crediential['mysql_host']
         user = db_crediential['mysql_user']
@@ -41,8 +41,8 @@ class Database:
                         SELECT Ticker, Date, CAST(Open AS DECIMAL(5, 2)) AS Open
                         FROM StockPrice
                         WHERE Date = (SELECT MAX(Date)
-                                    FROM StockPrice)) latest_price  ON latest_price.Ticker = StockInfo.Ticker          
-                """  
+                                    FROM StockPrice)) latest_price  ON latest_price.Ticker = StockInfo.Ticker
+                """
         self.cur.execute(query)
         result = self.cur.fetchall()
         self.cur.close()
@@ -56,12 +56,12 @@ class Database:
                     SELECT Ticker, MAX(Close)
                     FROM StockPrice
                     GROUP BY Ticker
-                """  
+                """
         self.cur.execute(query)
         result = self.cur.fetchall()
         self.cur.close()
         return result
-    
+
 
     def select_stock_with_daily_price(self, ticker):
         query = f"""
@@ -71,7 +71,7 @@ class Database:
                                          CAST(Close AS DECIMAL(5, 2)) AS Close
                     FROM StockPrice
                     WHERE Ticker = '{str(ticker)}'
-                 """  
+                 """
         self.cur.execute(query)
         result = self.cur.fetchall()
         self.cur.close()
@@ -97,6 +97,67 @@ class Database:
         result = self.cur.fetchall()
         return result[0]['password']
 
+
+
+    #default watchlist
+    def watchlist_default(self,user_id):
+        query = f"""
+                    SELECT* FROM Watchlist
+                    WHERE username like '{user_id}'
+        """
+        self.cur.execute(query)
+        result = self.cur.fetchall()
+        return result
+
+    #SEARCH
+    def watchlist_search(self, ticker):
+        query = f"""
+                    SELECT *
+                    FROM Watchlist
+                    WHERE ticker like '{ticker}'
+        """
+        self.cur.execute(query)
+        result = self.cur.fetchall()
+        return result
+
+    #INSERT
+    def watchlist_insert(self,user_id,ticker):
+        query = f"""
+                    INSERT INTO Watchlist(username, ticker)
+                    VALUES('{user_id}', '{ticker}')
+                    ON DUPLICATE KEY
+                    UPDATE username = username
+
+        """
+        self.cur.execute(query)
+        self.con.commit()
+        return
+
+    #UPDATE
+    def watchlist_update(self,user_id,ticker):
+        query = f"""
+                    UPDATE Watchlist
+                    SET owned = IF (owned,0,1)
+                    WHERE ticker like '{ticker}' and username like '{user_id}'
+        """
+        self.cur.execute(query)
+        self.con.commit()
+        return
+
+    #DELETE
+    def watchlist_delete(self,user_id,ticker):
+        query = f"""
+                    DELETE FROM Watchlist
+                    WHERE ticker like '{ticker}' and username like '{user_id}'
+        """
+        self.cur.execute(query)
+        self.con.commit()
+        return
+
+
+
+
+
 if __name__ == "__main__":
     # Test db connection
     db = Database()
@@ -107,5 +168,4 @@ if __name__ == "__main__":
     # db.insert_stock_data("top500_Oct-09-2020.csv")
     # print(db.select_stock_with_max_price())
     # print(db.select_stock_with_daily_price('MSFT'))
-
-    
+    print(db.watchlist_search('AAPL'))

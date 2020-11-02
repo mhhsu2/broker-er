@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'my key values'
 
 # configure your yaml
-CREDENTIAL_DIR = '.credentials'
+CREDENTIAL_DIR = '../.credentials'
 db = yaml.load(open(os.path.join(CREDENTIAL_DIR, 'db.yaml')), Loader=yaml.FullLoader)
 app.config['MYSQL_HOST'] = db['mysql_host']
 app.config['MYSQL_USER'] = db['mysql_user']
@@ -54,7 +54,7 @@ def login():
         user.id = user_id
         login_user(user)
         return redirect(url_for('home'))
-    
+
     return render_template('login.html')
 
 @app.route("/logout", methods=["GET"])
@@ -109,59 +109,35 @@ def users():
 def watchlist():
     # Get current user id with "current_user.id"
 
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT* FROM Watchlist")
-    companyData = cur.fetchall()
 
+    db = Database()
+    companyData = db.watchlist_default(current_user.id)
     if request.method == 'POST':
 
         stockDetails = request.form
+        ticker = stockDetails['ticker']
 
         #SEARCH
         if stockDetails['button'] == 'SEARCH':
-
-
-            ticker = stockDetails['ticker']
-            cur = mysql.connection.cursor()
-            cur.execute("SELECT * FROM Watchlist WHERE ticker like '%s'" %ticker)
-            companyData = cur.fetchall()
+            companyData = db.watchlist_search(ticker)
 
         #INSERT
         elif stockDetails['button'] == 'INSERT':
-
-            ticker = stockDetails['ticker']
-            cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO Watchlist(username, ticker) VALUES(%s, %s)",(current_user.id,ticker))
-            mysql.connection.commit()
-
-            cur = mysql.connection.cursor()
-            cur.execute("SELECT* FROM Watchlist")
+            db.watchlist_insert(current_user.id, ticker)
+            companyData = db.watchlist_default(current_user.id)
 
         #UPDATE
-        if stockDetails['button'] == 'UPDATE':
+        elif stockDetails['button'] == 'UPDATE':
 
-            ticker = stockDetails['ticker']
-            cur = mysql.connection.cursor()
-            cur.execute("UPDATE Watchlist SET owned = IF (owned,0,1) WHERE ticker like '%s'" %ticker)
-            mysql.connection.commit()
-
-            cur = mysql.connection.cursor()
-            cur.execute("SELECT* FROM Watchlist")
+            db.watchlist_update(current_user.id,ticker)
+            companyData = db.watchlist_default(current_user.id)
 
         #DELETE
         elif stockDetails['button'] == 'DELETE':
 
-            ticker = stockDetails['ticker']
-            cur = mysql.connection.cursor()
-            cur.execute("DELETE FROM Watchlist WHERE ticker like '%s'" %ticker)
-            mysql.connection.commit()
+            db.watchlist_delete(current_user.id,ticker)
+            companyData = db.watchlist_default(current_user.id)
 
-            cur = mysql.connection.cursor()
-            cur.execute("SELECT* FROM Watchlist")
-
-
-        companyData = cur.fetchall()
-        cur.close()
 
     return render_template('watchlist.html', companyData = companyData)
 

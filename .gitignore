@@ -131,3 +131,11 @@ dmypy.json
 # General
 .DS_Store
 .vscode
+
+# Data
+data
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

@@ -4,22 +4,12 @@ import constant
 
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
-from flask_mysqldb import MySQL
 
 from db import Database
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'my key values'
-
-# configure your yaml
-db = yaml.load(open(os.path.join(constant.CREDENTIAL_DIR, 'db.yaml')), Loader=yaml.FullLoader)
-app.config['MYSQL_HOST'] = db['mysql_host']
-app.config['MYSQL_USER'] = db['mysql_user']
-app.config['MYSQL_PASSWORD'] = db['mysql_password']
-app.config['MYSQL_DB'] = db['mysql_db']
-
-mysql = MySQL(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -95,14 +85,6 @@ def stock(ticker):
     db = Database()
     stockData = db.select_stock_with_daily_price(ticker)
     return render_template('stock.html', ticker=ticker, stockData=stockData)
-
-@app.route('/users')
-def users():
-    cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM Users")
-    if resultValue > 0:
-        userDetails = cur.fetchall()
-        return render_template('users.html',userDetails=userDetails)
 
 
 @app.route('/watchlist', methods=['GET','POST'])

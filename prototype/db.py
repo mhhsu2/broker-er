@@ -1,4 +1,6 @@
 import os
+import sys
+import constant
 import pymysql
 import yaml
 import pandas as pd
@@ -6,8 +8,7 @@ import pandas as pd
 
 class Database:
     def __init__(self):
-        CREDENTIAL_DIR = '../.credentials'
-        db_crediential = yaml.load(open(os.path.join(CREDENTIAL_DIR, 'db.yaml')), Loader=yaml.FullLoader)
+        db_crediential = yaml.load(open(os.path.join(constant.CREDENTIAL_DIR, 'db.yaml')), Loader=yaml.FullLoader)
         host = db_crediential['mysql_host']
         user = db_crediential['mysql_user']
         password = db_crediential['mysql_password']
@@ -20,8 +21,7 @@ class Database:
         """
         SQL operation for inserting stock data into MySQL from a .csv file.
         """
-        DATA_DIR = "./data"
-        df = pd.read_csv(os.path.join(DATA_DIR, filename))
+        df = pd.read_csv(os.path.join(constant.DATA_DIR, filename))
 
         for index, row in df.iterrows():
             self.cur.execute("INSERT INTO stockprice(ticker, date, open, high, low, close, volume) VALUES(%s, %s, %s, %s, %s, %s, %s)",

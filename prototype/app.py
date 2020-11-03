@@ -1,5 +1,6 @@
 import yaml
 import os
+import constant
 
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
@@ -12,8 +13,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'my key values'
 
 # configure your yaml
-CREDENTIAL_DIR = '../.credentials'
-db = yaml.load(open(os.path.join(CREDENTIAL_DIR, 'db.yaml')), Loader=yaml.FullLoader)
+db = yaml.load(open(os.path.join(constant.CREDENTIAL_DIR, 'db.yaml')), Loader=yaml.FullLoader)
 app.config['MYSQL_HOST'] = db['mysql_host']
 app.config['MYSQL_USER'] = db['mysql_user']
 app.config['MYSQL_PASSWORD'] = db['mysql_password']
@@ -64,7 +64,7 @@ def logout():
     user = current_user
     user.authenticated = False
     logout_user()
-    return render_template("login.html")
+    return redirect(url_for('home'))
 
 #TODO:
 @app.route("/register", methods=["GET"])
@@ -106,6 +106,7 @@ def users():
 
 
 @app.route('/watchlist', methods=['GET','POST'])
+@login_required
 def watchlist():
     # Get current user id with "current_user.id"
 

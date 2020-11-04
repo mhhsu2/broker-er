@@ -9,6 +9,7 @@ from db import Database
 
 
 app = Flask(__name__)
+application = app
 app.config['SECRET_KEY'] = 'my key values'
 
 login_manager = LoginManager()

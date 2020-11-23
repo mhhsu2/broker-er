@@ -11,7 +11,7 @@ plt.style.use('fivethirtyeight')
 
 from db import Database
 
-def predict(df):
+def predict(df,ticker):
 
     #create a new dataframe with only the close column
 
@@ -110,35 +110,15 @@ def predict(df):
 
     graph.append(predictionList[0])
 
+    fig1 =plt.gcf()
+
     plt.plot(graph)
 
     plt.plot(np.arange(7)+training_data_len ,predictionList)
     plt.legend(['Train','Predictions'], loc = 'lower right')
     plt.show()
 
-
-
-
-    quote = df
-    new_df = quote.filter(['Close'])
-
-
-
-    last_30_days = new_df[-30:].values
-    last_30_days_scaled = scaler.transform(last_30_days)
-
-    X_test=[]
-    X_test.append(last_30_days_scaled)
-    X_test=np.array(X_test)
-    X_test = np.reshape(X_test, (X_test.shape[0],X_test.shape[1],1))
-
-    pred_price = model.predict(X_test)
-    pred_price = scaler.inverse_transform(pred_price)
-
-
-    print(pred_price)
-
-
+    fig1.savefig("static/graphs/"+ticker+".png")
 
 
 
@@ -152,4 +132,5 @@ if __name__ == "__main__":
     for ticker in famous_stocks:
         stock = ticker['Ticker']
         info = db.get_stock_data(stock)
-        predict(info)
+        predict(info, stock)
+        break

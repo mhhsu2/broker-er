@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block content%}
 
+
+<img src="{{filename}}" alt= "my plot" width=640 height =400> 
+
 <table id="data" class="table text-center table-sm table-hover table-striped table-bordered">
     <thead>
         <tr>
@@ -22,11 +25,11 @@
             <td>{{ row['High'] }}</td>
             <td>{{ row['Low']}}</td>
             <td>{{ row['Close']}}</td>
-            
-        </tr> 
-        
-        {% endfor %} 
-    </tbody>   
+
+        </tr>
+
+        {% endfor %}
+    </tbody>
 </table>
 
 {% endblock %}

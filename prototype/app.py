@@ -9,6 +9,10 @@ from flask_mysqldb import MySQL
 from db import Database
 
 
+GRAPH_FOLDER = os.path.join('/static','graphs')
+
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'my key values'
 
@@ -18,6 +22,8 @@ app.config['MYSQL_HOST'] = db['mysql_host']
 app.config['MYSQL_USER'] = db['mysql_user']
 app.config['MYSQL_PASSWORD'] = db['mysql_password']
 app.config['MYSQL_DB'] = db['mysql_db']
+
+app.config['UPLOAD_FOLDER'] = GRAPH_FOLDER
 
 mysql = MySQL(app)
 
@@ -90,11 +96,22 @@ def home():
     stockInfo = db.select_stock_with_latest_info()
     return render_template('home.html', stockInfo=stockInfo)
 
+
+
+
 @app.route('/stock/<ticker>', methods=['GET'])
 def stock(ticker):
     db = Database()
     stockData = db.select_stock_with_daily_price(ticker)
-    return render_template('stock.html', ticker=ticker, stockData=stockData)
+
+    filename = os.path.join(app.config['UPLOAD_FOLDER'], ticker+'.png')
+    print(filename)
+    return render_template('stock.html', ticker=ticker, stockData=stockData, filename = filename)
+
+
+
+
+
 
 @app.route('/users')
 def users():

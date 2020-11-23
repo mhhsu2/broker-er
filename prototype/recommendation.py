@@ -7,7 +7,8 @@ from keras.models import Sequential
 from keras.layers import Dense, LSTM
 import matplotlib.pyplot as plt
 plt.style.use('fivethirtyeight')
-
+import matplotlib
+matplotlib.use("agg")
 
 from db import Database
 

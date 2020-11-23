@@ -7,7 +7,7 @@ from flask_login import UserMixin, LoginManager, login_user, logout_user, login_
 from flask_mysqldb import MySQL
 
 from db import Database
-
+from recommendation import predict
 
 GRAPH_FOLDER = os.path.join('/static','graphs')
 
@@ -104,8 +104,11 @@ def stock(ticker):
     db = Database()
     stockData = db.select_stock_with_daily_price(ticker)
 
+    info = db.get_stock_data(ticker)
+    predict(info,ticker)
+
+    print("prediction ", ticker, " done")
     filename = os.path.join(app.config['UPLOAD_FOLDER'], ticker+'.png')
-    print(filename)
     return render_template('stock.html', ticker=ticker, stockData=stockData, filename = filename)
 
 

@@ -1,0 +1,13 @@
+.watchlistcss h1 {
+  text-align: center;
+  color: #5b6574;
+  font-size: 40px;
+  padding: 20px 0 20px 0;
+}
+
+
+
+
+.float-child {
+    float: left;
+}

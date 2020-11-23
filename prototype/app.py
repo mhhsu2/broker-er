@@ -139,8 +139,13 @@ def watchlist():
             db.watchlist_delete(current_user.id,ticker)
             companyData = db.watchlist_default(current_user.id)
 
+    famousStocks = db.watchlist_famous_stocks()
+    print(famousStocks)
+    print(companyData)
 
-    return render_template('watchlist.html', companyData = companyData)
+    return render_template('watchlist.html', famousStocks = famousStocks,
+                                            companyData = companyData,
+                                            username = current_user.id)
 
 
 if __name__ == '__main__':

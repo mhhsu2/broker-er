@@ -154,7 +154,29 @@ class Database:
         self.con.commit()
         return
 
+    def watchlist_famous_stocks(self):
+        query = f"""
+                    select Ticker
+                    from `Broker-er`.`Watchlist`
+                    group by Ticker
+                    order by sum(owned)
+                    limit 10
+        """
+        self.cur.execute(query)
+        result = self.cur.fetchall()
+        return result
 
+    def get_stock_data(self,ticker):
+        query = pd.read_sql_query(f"""
+                    SELECT Ticker, Date, CAST(Close AS DECIMAL(5, 2)) AS Close
+                    FROM StockPrice
+                    WHERE Ticker = '{str(ticker)}'
+                 """, self.con)
+
+        result = pd.DataFrame(query, columns=['Ticker', 'Date','Close'])
+        #self.cur.execute(query)
+        #result = self.cur.fetchall()
+        return result
 
 
 

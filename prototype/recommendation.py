@@ -122,16 +122,40 @@ def predict(df,ticker):
     fig1.savefig("static/graphs/"+ticker+".png")
 
 
+    return predictionList
+
+
+def insert_prediction(db,ticker,data):
+
+    predictionList = predict(data,ticker)
+    print(predictionList)
+    for index,prediction in  enumerate(predictionList):
+        print(index,prediction)
+        query = f"""
+                INSERT INTO PredictedStock(Ticker, Future_Date, Future_Price)
+                VALUES('{ticker}', '{index+1}', '{prediction}')
+                ON DUPLICATE KEY
+                UPDATE Future_Price = '{prediction}'
+
+        """
+        db.cur.execute(query)
+        db.con.commit()
+    return
 
 
 if __name__ == "__main__":
 
     db = Database()
-    print(f"Connected: {db.con.open}")
-    famous_stocks = db.watchlist_famous_stocks()
+    result = db.select_stock_with_max_price()
 
-    for ticker in famous_stocks:
-        stock = ticker['Ticker']
-        info = db.get_stock_data(stock)
-        predict(info, stock)
-        break
+
+    for index,row in enumerate(result):
+        if index < 68:
+            continue
+        print(index)
+        ticker =row['Ticker']
+        print(ticker)
+        data = db.get_stock_data(ticker)
+        if len(data) < 100:
+            continue
+        insert_prediction(db,ticker,data)

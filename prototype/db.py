@@ -5,7 +5,6 @@ import pymysql
 import yaml
 import pandas as pd
 
-
 class Database:
     def __init__(self):
         db_crediential = yaml.load(open(os.path.join(constant.CREDENTIAL_DIR, 'db.yaml')), Loader=yaml.FullLoader)
@@ -59,7 +58,7 @@ class Database:
                 """
         self.cur.execute(query)
         result = self.cur.fetchall()
-        self.cur.close()
+        #self.cur.close()
         return result
 
 
@@ -180,14 +179,17 @@ class Database:
 
 
 
+
+
 if __name__ == "__main__":
     # Test db connection
     db = Database()
     print(f"Connected: {db.con.open}")
+
+
 
     # Test
     # print(f"{db.select_stock_with_latest_info()[:2]}")
     # db.insert_stock_data("top500_Oct-09-2020.csv")
     # print(db.select_stock_with_max_price())
     # print(db.select_stock_with_daily_price('MSFT'))
-    print(db.watchlist_search('AAPL'))

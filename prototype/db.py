@@ -178,6 +178,32 @@ class Database:
         return result
 
 
+    def get_recommendation(self):
+        query = f"""
+                select Ticker
+                from PredictedResults
+                where PredictionAvg > RecentPrice
+        """
+        self.cur.execute(query)
+        results = self.cur.fetchall()
+        return results
+
+    def get_user_emails(self):
+        query = f"""
+                    SELECT distinct(email)
+                    FROM Users
+        """
+        self.cur.execute(query)
+        emails = self.cur.fetchall()
+        return emails
+
+
+
+
+
+
+
+
 
 
 

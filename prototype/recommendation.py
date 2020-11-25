@@ -11,6 +11,8 @@ import matplotlib
 matplotlib.use("agg")
 
 from db import Database
+from sendEmail import sendEmail
+
 
 def predict(df,ticker):
 
@@ -143,19 +145,33 @@ def insert_prediction(db,ticker,data):
     return
 
 
+def processEmail():
+
+    db = Database()
+    stocks = db.get_recommendation()
+    emails = db.get_user_emails()
+
+    stocks = [d['Ticker'] for d in stocks]
+
+    for email in emails:
+        sendEmail(stocks,email)
+        break
+
 if __name__ == "__main__":
 
     db = Database()
     result = db.select_stock_with_max_price()
 
 
-    for index,row in enumerate(result):
-        if index < 68:
-            continue
-        print(index)
-        ticker =row['Ticker']
-        print(ticker)
-        data = db.get_stock_data(ticker)
-        if len(data) < 100:
-            continue
-        insert_prediction(db,ticker,data)
+    # for index,row in enumerate(result):
+    #     print(index)
+    #     ticker =row['Ticker']
+    #     print(ticker)
+    #     data = db.get_stock_data(ticker)
+    #     if len(data) < 100:
+    #         continue
+    #     insert_prediction(db,ticker,data)
+    #     if index ==5:
+    #         break
+
+    processEmail()

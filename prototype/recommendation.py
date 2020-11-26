@@ -163,15 +163,15 @@ if __name__ == "__main__":
     result = db.select_stock_with_max_price()
 
 
-    # for index,row in enumerate(result):
-    #     print(index)
-    #     ticker =row['Ticker']
-    #     print(ticker)
-    #     data = db.get_stock_data(ticker)
-    #     if len(data) < 100:
-    #         continue
-    #     insert_prediction(db,ticker,data)
-    #     if index ==5:
-    #         break
+    for index,row in enumerate(result):
+        if index < 308:
+            continue
+        print(index)
+        ticker =row['Ticker']
+        print(ticker)
+        data = db.get_stock_data(ticker)
+        if len(data) < 100:
+            continue
+        insert_prediction(db,ticker,data)
 
-    processEmail()
+    #processEmail()

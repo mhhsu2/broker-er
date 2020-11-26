@@ -30,7 +30,7 @@ BEGIN
 
 	if new.Future_Date =7 then
 
-		set t = (select Close
+		set t = (select distinct(Close)
         from `broker-er`.`StockPrice`s1, (select Ticker, max(Date) as maxDate
 										from `broker-er`.`StockPrice`
 										where Ticker = new.Ticker

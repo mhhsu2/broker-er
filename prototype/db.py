@@ -226,9 +226,9 @@ class Database:
         # tickers = pd.DataFrame(query, columns=['Ticker'])
 
         data_vecs = []
-        for index,row in enumerate(tickers):                  
-            ticker =row['Ticker']         
-            data = db.get_recent_five(ticker) 
+        for index,row in enumerate(tickers):                
+            ticker =row['Ticker']        
+            data = db.get_recent_five(ticker)
 
             data_vecs.append(data.values)
 

@@ -1,3 +1,4 @@
+import os 
 import math
 import pandas_datareader as web
 import numpy as np
@@ -12,6 +13,11 @@ matplotlib.use("agg")
 
 from db import Database
 from sendEmail import sendEmail
+
+import plotly.offline as pyo
+import plotly.graph_objects as go
+from utils import save_json
+import constant
 
 
 def predict(df,ticker):
@@ -106,22 +112,26 @@ def predict(df,ticker):
     #print(valid)
     #valid['Predictions'] = predictions
     #print(valid)
+    graphJSON = plotly_stock(data, predictionList)
+    os.makedirs(constant.GRAPH_DIR, exist_ok=True)
+    save_json(graphJSON, os.path.join(constant.GRAPH_DIR, f"{ticker}.json"))
 
-    plt.figure(figsize = (16,8))
 
-    graph = list(np.squeeze(data.values))
+    # plt.figure(figsize = (16,8))
 
-    graph.append(predictionList[0])
+    # graph = list(np.squeeze(data.values))
 
-    fig1 =plt.gcf()
+    # graph.append(predictionList[0])
 
-    plt.plot(graph)
+    # fig1 =plt.gcf()
 
-    plt.plot(np.arange(7)+training_data_len ,predictionList)
-    plt.legend(['Train','Predictions'], loc = 'lower right')
-    plt.show()
+    # plt.plot(graph)
 
-    fig1.savefig("static/graphs/"+ticker+".png")
+    # plt.plot(np.arange(7)+training_data_len ,predictionList)
+    # plt.legend(['Train','Predictions'], loc = 'lower right')
+    # plt.show()
+
+    # fig1.savefig("static/graphs/"+ticker+".png")
 
 
     return predictionList
@@ -169,6 +179,29 @@ def processEmail():
     for email in emails:
         sendEmail(stocks,email)
         break
+
+def plotly_stock(data, prediction):
+    hist_data = go.Scatter(
+        x=data.index.values,
+        y=data["Close"].values,
+        name="Historical Data",
+    )
+
+    prediction = np.append(data.values[-1], prediction)
+    predict_data = go.Scatter(
+        x=np.arange(8) + data.index.values[-1],
+        y=prediction,
+        mode="lines",
+        line=dict(color='firebrick'),
+        name="Prediction",
+    )
+
+    fig = go.Figure([hist_data, predict_data])
+    # Convert the figures to JSON
+    graphJSON = fig.to_json()
+
+    return graphJSON
+
 
 
 if __name__ == "__main__":

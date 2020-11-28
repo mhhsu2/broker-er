@@ -5,9 +5,45 @@
   padding: 20px 0 20px 0;
 }
 
+table.center {
+  counter-reset: rowNumber;
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 80%;
+
+  margin: 0 auto;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 4px;
+}
+
+tr {
+  background-color: #;
+}
+tr.owned{
+  background-color: #FF9999;
+}
+
+h2{
+  text-align: center;
+}
+
+tr.display:nth-child(even) {
+  background-color: #dddddd;
+}
+
 
 
 
 .float-child {
     float: left;
+}
+
+.col-centered{
+    margin: 0 auto;
+    float: none;
+    width:50%;
 }

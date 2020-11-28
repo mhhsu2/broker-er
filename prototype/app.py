@@ -105,10 +105,15 @@ def stock(ticker):
     stockData = db.select_stock_with_daily_price(ticker)
 
     info = db.get_stock_data(ticker)
-    predict(info,ticker)
-
-    print("prediction ", ticker, " done")
     filename = os.path.join(app.config['UPLOAD_FOLDER'], ticker+'.png')
+
+    print(filename[1:])
+    print(os.path.isfile(filename[1:]))
+    if not os.path.isfile(filename[1:]):
+
+        predict(info,ticker)
+        print("prediction ", ticker, " done")
+
     return render_template('stock.html', ticker=ticker, stockData=stockData, filename = filename)
 
 
@@ -160,8 +165,7 @@ def watchlist():
             companyData = db.watchlist_default(current_user.id)
 
     famousStocks = db.watchlist_famous_stocks()
-    print(famousStocks)
-    print(companyData)
+
 
     return render_template('watchlist.html', famousStocks = famousStocks,
                                             companyData = companyData,

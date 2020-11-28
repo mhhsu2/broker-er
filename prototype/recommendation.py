@@ -127,12 +127,25 @@ def predict(df,ticker):
     return predictionList
 
 
+def save_image(graph,ticker):
+    fig1 =plt.gcf()
+
+    plt.plot(graph)
+
+    plt.plot(np.arange(7)+training_data_len ,predictionList)
+    plt.legend(['Train','Predictions'], loc = 'lower right')
+    plt.show()
+
+    fig1.savefig("static/graphs/"+ticker+".png")
+
+    return
+
+
 def insert_prediction(db,ticker,data):
 
     predictionList = predict(data,ticker)
-    print(predictionList)
+
     for index,prediction in  enumerate(predictionList):
-        print(index,prediction)
         query = f"""
                 INSERT INTO PredictedStock(Ticker, Future_Date, Future_Price)
                 VALUES('{ticker}', '{index+1}', '{prediction}')
@@ -145,8 +158,8 @@ def insert_prediction(db,ticker,data):
     return
 
 
-def processEmail():
 
+def processEmail():
     db = Database()
     stocks = db.get_recommendation()
     emails = db.get_user_emails()
@@ -157,21 +170,16 @@ def processEmail():
         sendEmail(stocks,email)
         break
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     db = Database()
     result = db.select_stock_with_max_price()
 
-
     for index,row in enumerate(result):
-        if index < 308:
-            continue
-        print(index)
         ticker =row['Ticker']
-        print(ticker)
         data = db.get_stock_data(ticker)
         if len(data) < 100:
             continue
         insert_prediction(db,ticker,data)
 
-    #processEmail()
+    processEmail()

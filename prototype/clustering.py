@@ -1,9 +1,30 @@
-import numpy as np 
-import sklearn
+import numpy as np
+from sklearn.cluster import KMeans
+from db import Database
 
-def clustering(data):
+
+
+def clustering():
 
 	db = Database()
-    data_vecs = db.clustering_data()
 
-    
+	tickers, data_vecs = db.clustering_data()
+
+	kmeans = KMeans(n_clusters =10, random_state = 0).fit(data_vecs)
+	clusterIds = kmeans.labels_
+
+
+
+
+
+
+
+	print(clusterIds)
+	print(tickers)
+	print(data_vecs)
+
+
+
+
+if __name__ == "__main__":
+	clustering()

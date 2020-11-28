@@ -8,6 +8,7 @@ from flask_mysqldb import MySQL
 
 from db import Database
 from recommendation import predict
+from utils import read_json
 
 GRAPH_FOLDER = os.path.join('/static','graphs')
 
@@ -106,13 +107,14 @@ def stock(ticker):
     info = db.get_stock_data(ticker)
     cypher = f"MATCH (n:Company)-[r:IN]->(m)<-[d:IN]-(s:Company) WHERE n.ticker = '{ticker}' RETURN *"
 
-    filename = os.path.join(app.config['UPLOAD_FOLDER'], ticker+'.png')
-    if not os.path.isfile(filename[1:]):
+    cache_path = os.path.join(constant.GRAPH_DIR, f"{ticker}.json")
+    if not os.path.isfile(cache_path):
+        predict(info, ticker)
+        print(f"Prediction {ticker} is done.")
+    
+    graphJSON = read_json(cache_path)
 
-        predict(info,ticker)
-        print("prediction ", ticker, " done")
-
-    return render_template('stock.html', ticker=ticker, stockData=stockData, filename = filename, cypher=cypher)
+    return render_template('stock.html', ticker=ticker, stockData=stockData, cypher=cypher, graphJSON=graphJSON)
 
 
 

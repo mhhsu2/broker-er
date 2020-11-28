@@ -104,16 +104,15 @@ def stock(ticker):
     stockData = db.select_stock_with_daily_price(ticker)
 
     info = db.get_stock_data(ticker)
-    filename = os.path.join(app.config['UPLOAD_FOLDER'], ticker+'.png')
+    cypher = f"MATCH (n:Company)-[r:IN]->(m)<-[d:IN]-(s:Company) WHERE n.ticker = '{ticker}' RETURN *"
 
-    print(filename[1:])
-    print(os.path.isfile(filename[1:]))
+    filename = os.path.join(app.config['UPLOAD_FOLDER'], ticker+'.png')
     if not os.path.isfile(filename[1:]):
 
         predict(info,ticker)
         print("prediction ", ticker, " done")
 
-    return render_template('stock.html', ticker=ticker, stockData=stockData, filename = filename)
+    return render_template('stock.html', ticker=ticker, stockData=stockData, filename = filename, cypher=cypher)
 
 
 

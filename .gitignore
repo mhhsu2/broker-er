@@ -131,3 +131,7 @@ dmypy.json
 # General
 .DS_Store
 .vscode
+
+# AWS
+.elasticbeanstalk/*
+.credentials/*

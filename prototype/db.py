@@ -204,6 +204,33 @@ class Database:
 
 
 
+    def clustering_data(self):
+
+        query = """
+                    SELECT DISTINCT Ticker
+                    FROM StockPrice
+                """
+        self.cur.execute(query)
+        tickers = self.cur.fetchall()
+        # tickers = pd.DataFrame(query, columns=['Ticker'])
+
+        data_vecs = []
+        for index,row in enumerate(tickers):
+            ticker =row['Ticker']
+            data = db.get_recent_five(ticker)
+
+        data_vecs =[]
+        for index, row in enumerate(tickers):
+            if index >100:
+                break
+            ticker = row['Ticker']
+            print(ticker)
+            data = self.get_recent_five(ticker)
+            data_vecs.append(data.values)
+
+
+        return tickers,data_vecs
+
 
 
 if __name__ == "__main__":

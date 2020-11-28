@@ -105,13 +105,15 @@ def stock(ticker):
     stockData = db.select_stock_with_daily_price(ticker)
 
     info = db.get_stock_data(ticker)
-    # predict(info,ticker)
     cypher = f"MATCH (n:Company)-[r:IN]->(m)<-[d:IN]-(s:Company) WHERE n.ticker = '{ticker}' RETURN *"
-    print(cypher)
 
-    print("prediction ", ticker, " done")
     filename = os.path.join(app.config['UPLOAD_FOLDER'], ticker+'.png')
-    return render_template('stock.html', cypher=cypher, stockData=stockData, filename=filename)
+    if not os.path.isfile(filename[1:]):
+
+        predict(info,ticker)
+        print("prediction ", ticker, " done")
+
+    return render_template('stock.html', ticker=ticker, stockData=stockData, filename = filename, cypher=cypher)
 
 
 
@@ -162,8 +164,7 @@ def watchlist():
             companyData = db.watchlist_default(current_user.id)
 
     famousStocks = db.watchlist_famous_stocks()
-    print(famousStocks)
-    print(companyData)
+
 
     return render_template('watchlist.html', famousStocks = famousStocks,
                                             companyData = companyData,

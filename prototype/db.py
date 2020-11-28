@@ -214,9 +214,7 @@ class Database:
 
 
     def clustering_data(self):
-        """
-        SQL operation for selecting stock data displayed in home page.
-        """
+
         query = """
                     SELECT DISTINCT Ticker
                     FROM StockPrice
@@ -230,9 +228,17 @@ class Database:
             ticker =row['Ticker']        
             data = db.get_recent_five(ticker)
 
+        data_vecs =[]
+        for index, row in enumerate(tickers):
+            if index >100:
+                break
+            ticker = row['Ticker']
+            print(ticker)
+            data = self.get_recent_five(ticker)
             data_vecs.append(data.values)
 
-        return result
+
+        return tickers,data_vecs
 
 
 
@@ -243,8 +249,4 @@ if __name__ == "__main__":
 
 
 
-    # Test
-    # print(f"{db.select_stock_with_latest_info()[:2]}")
-    # db.insert_stock_data("top500_Oct-09-2020.csv")
-    # print(db.select_stock_with_max_price())
-    # print(db.select_stock_with_daily_price('MSFT'))
+    

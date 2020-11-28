@@ -77,7 +77,6 @@ def logout():
 def register():
     pass
 
-# This is home, probably need to get rid of this and change to show stocks :)
 @app.route('/', methods=['GET', 'POST'])
 def home():
     db = Database()

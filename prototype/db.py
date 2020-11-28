@@ -44,8 +44,10 @@ class Database:
                 """
         self.cur.execute(query)
         result = self.cur.fetchall()
-        self.cur.close()
+        #self.cur.close()
         return result
+
+
 
     def select_stock_with_max_price(self):
         """
@@ -198,41 +200,9 @@ class Database:
         return emails
 
 
-    def get_recent_five(self,ticker):
-        query = pd.read_sql_query(f"""
-                    SELECT CAST(Close AS DECIMAL(5, 2)) AS Close
-                    FROM StockPrice
-                    WHERE Ticker = '{str(ticker)}'
-                    ORDER BY Date DESC
-                    Limit 5
-                 """, self.con)
-
-        result = pd.DataFrame(query, columns=['Close'])
-        # self.cur.execute(query)
-        # result = self.cur.fetchall()
-        return result.filter(['Close'])
 
 
-    def clustering_data(self):
 
-        query = """
-                    SELECT DISTINCT Ticker
-                    FROM StockPrice
-                """
-        self.cur.execute(query)
-        tickers = self.cur.fetchall()
-
-        data_vecs =[]
-        for index, row in enumerate(tickers):
-            if index >100:
-                break
-            ticker = row['Ticker']
-            print(ticker)
-            data = self.get_recent_five(ticker)
-            data_vecs.append(data.values)
-
-
-        return tickers,data_vecs
 
 
 
@@ -240,7 +210,3 @@ if __name__ == "__main__":
     # Test db connection
     db = Database()
     print(f"Connected: {db.con.open}")
-
-
-
-    

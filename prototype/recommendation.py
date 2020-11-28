@@ -173,13 +173,19 @@ def processEmail():
 
 if __name__ == "__main__":
     db = Database()
-    result = db.select_stock_with_max_price()
+
+
+    result = db.select_stock_with_latest_info()
 
     for index,row in enumerate(result):
+        if index > 3:
+            break
         ticker =row['Ticker']
+        print(ticker)
         data = db.get_stock_data(ticker)
         if len(data) < 100:
             continue
+
         insert_prediction(db,ticker,data)
 
     processEmail()

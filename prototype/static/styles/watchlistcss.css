@@ -1,16 +1,14 @@
 .watchlistcss h1 {
-  text-align: center;
+  margin-left:10px;
   color: #5b6574;
   font-size: 40px;
   padding: 20px 0 20px 0;
 }
 
 table.center {
-  counter-reset: rowNumber;
   font-family: arial, sans-serif;
   border-collapse: collapse;
   width: 80%;
-
   margin: 0 auto;
 }
 
@@ -36,8 +34,6 @@ tr.display:nth-child(even) {
 }
 
 
-
-
 .float-child {
     float: left;
 }
@@ -46,4 +42,24 @@ tr.display:nth-child(even) {
     margin: 0 auto;
     float: none;
     width:50%;
+}
+
+
+
+.row {
+  margin-left:10px;
+  margin-right:5px;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
 }

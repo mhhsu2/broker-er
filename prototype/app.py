@@ -111,7 +111,7 @@ def stock(ticker):
     if not os.path.isfile(cache_path):
         predict(info, ticker)
         print(f"Prediction {ticker} is done.")
-    
+
     graphJSON = read_json(cache_path)
 
     return render_template('stock.html', ticker=ticker, stockData=stockData, cypher=cypher, graphJSON=graphJSON)
@@ -145,7 +145,7 @@ def watchlist():
 
         #SEARCH
         if stockDetails['button'] == 'SEARCH':
-            companyData = db.watchlist_search(ticker)
+            companyData = db.watchlist_search(current_user.id,ticker)
 
         #INSERT
         elif stockDetails['button'] == 'INSERT':

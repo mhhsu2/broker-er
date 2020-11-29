@@ -111,11 +111,11 @@ class Database:
         return result
 
     #SEARCH
-    def watchlist_search(self, ticker):
+    def watchlist_search(self, user_id,ticker):
         query = f"""
                     SELECT *
                     FROM Watchlist
-                    WHERE ticker like '{ticker}'
+                    WHERE ticker like '{ticker}' and username ='{user_id}'
         """
         self.cur.execute(query)
         result = self.cur.fetchall()
@@ -157,11 +157,14 @@ class Database:
 
     def watchlist_famous_stocks(self):
         query = f"""
-                    select Ticker
+                    select s1.Ticker, sector, country
+                    from (select Ticker
                     from `Broker-er`.`Watchlist`
                     group by Ticker
                     order by sum(owned)
-                    limit 10
+                    limit 10)s1 join `Broker-er`.`StockInfo` s2
+                    where s1.Ticker = s2.Ticker
+
         """
         self.cur.execute(query)
         result = self.cur.fetchall()
@@ -203,33 +206,6 @@ class Database:
 
 
 
-
-    def clustering_data(self):
-
-        query = """
-                    SELECT DISTINCT Ticker
-                    FROM StockPrice
-                """
-        self.cur.execute(query)
-        tickers = self.cur.fetchall()
-        # tickers = pd.DataFrame(query, columns=['Ticker'])
-
-        data_vecs = []
-        for index,row in enumerate(tickers):
-            ticker =row['Ticker']
-            data = db.get_recent_five(ticker)
-
-        data_vecs =[]
-        for index, row in enumerate(tickers):
-            if index >100:
-                break
-            ticker = row['Ticker']
-            print(ticker)
-            data = self.get_recent_five(ticker)
-            data_vecs.append(data.values)
-
-
-        return tickers,data_vecs
 
 
 

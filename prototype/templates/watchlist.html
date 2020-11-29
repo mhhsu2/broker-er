@@ -65,6 +65,8 @@
         <thead>
             <tr >
                 <th>Comapny Ticker</th>
+                <th>Sector</th>
+                <th>Country</th>
             </tr>
         </thead>
 
@@ -73,6 +75,8 @@
 
                 <tr class= "display">
                   <td><a href="{{ url_for('stock', ticker=stock['Ticker']) }}">{{ stock['Ticker'] }}</a></td>
+                  <td>{{ stock['sector'] }}</td>
+                  <td>{{ stock['country'] }}</td>
                 </tr>
 
             {% endfor %}

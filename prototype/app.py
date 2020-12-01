@@ -7,7 +7,7 @@ from flask_login import UserMixin, LoginManager, login_user, logout_user, login_
 from flask_mysqldb import MySQL
 
 from db import Database
-from recommendation import predict
+from recommendation import predict,insert_prediction
 from utils import read_json
 
 GRAPH_FOLDER = os.path.join('/static','graphs')
@@ -94,7 +94,14 @@ def home():
         return redirect('/users')
 
     stockInfo = db.select_stock_with_latest_info()
+
+
+
     return render_template('home.html', stockInfo=stockInfo)
+
+
+
+
 
 
 
@@ -109,7 +116,7 @@ def stock(ticker):
 
     cache_path = os.path.join(constant.GRAPH_DIR, f"{ticker}.json")
     if not os.path.isfile(cache_path):
-        predict(info, ticker)
+        insert_prediction(db,ticker,info)
         print(f"Prediction {ticker} is done.")
 
     graphJSON = read_json(cache_path)

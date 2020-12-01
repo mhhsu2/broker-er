@@ -1,4 +1,4 @@
-import os 
+import os
 import math
 import pandas_datareader as web
 import numpy as np
@@ -211,7 +211,8 @@ if __name__ == "__main__":
     result = db.select_stock_with_latest_info()
 
     for index,row in enumerate(result):
-        if index > 3:
+
+        if index  >2:
             break
         ticker =row['Ticker']
         print(ticker)

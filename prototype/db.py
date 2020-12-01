@@ -35,17 +35,27 @@ class Database:
         SQL operation for selecting stock data displayed in home page.
         """
         query = """
+
+
+
+
                     SELECT latest_price.Ticker, sector, country, Date, Open
                     FROM StockInfo INNER JOIN (
                         SELECT Ticker, Date, CAST(Open AS DECIMAL(5, 2)) AS Open
                         FROM StockPrice
                         WHERE Date = (SELECT MAX(Date)
                                     FROM StockPrice)) latest_price  ON latest_price.Ticker = StockInfo.Ticker
+
+
+
+
                 """
         self.cur.execute(query)
         result = self.cur.fetchall()
         #self.cur.close()
         return result
+
+
 
 
 
@@ -75,7 +85,6 @@ class Database:
                  """
         self.cur.execute(query)
         result = self.cur.fetchall()
-        self.cur.close()
         return result
 
     def get_user_id(self, user_id):

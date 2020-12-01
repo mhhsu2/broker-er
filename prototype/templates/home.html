@@ -28,9 +28,17 @@
 
     <tbody>
         {% for row in stockInfo %}
-        <tr>
+        {% if row['prediction']  %}
+          <tr style="background-color:rgb({{row['prediction']}}, 0, 0)"">
+
+          {% else %}
+          <tr class ="background-color:rgb(0, {{row['prediction']}} , 0)"">
+
+          {% endif %}
+
+
             <td><a href="{{ url_for('stock', ticker=row['Ticker']) }}">{{ row['Ticker'] }}</a></td>
-            <td>{{ row['sector'] }}</td>
+            <td>{{ row['sector'] }}{{row['prediction']}}</td>
             <td>{{ row['country'] }}</td>
             <td>{{ row['Date'] }}</td>
             <td>{{ row['Open']}}</td>
